@@ -11,12 +11,23 @@ const app = express()
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "DELETE", "PUT"]
 
-}))
+const allowedOrigins = [
+  'http://localhost:5173', // Local frontend (Vite)
+  'https://fintrack-lxsb.onrender.com' // Aapka Render URL
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy doesn\'t allow access'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 
 //Auth routes
 app.use("/api/auth", authRouter)
