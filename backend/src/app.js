@@ -40,7 +40,17 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*name', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+app.get("/keep-alive", (req, res) => {
+  res.send("Keep-alive")
+})
+
+setInterval(() => {
+  fetch("https://fintrack-lxsb.onrender.com/keep-alive")
+    .then(() => console.log("pinged self to stay"))
+    .catch((err) => console.error("Ping failed ", err))
+}, 5 * 60 * 100)
 
 export default app
